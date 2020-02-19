@@ -18,6 +18,23 @@ class List
     end
   end
 
+  def remove_item(index)
+    if self.valid_index?(index)
+      self.items.delete_at(index)
+      return true
+    else
+      return false
+    end
+  end
+
+  def purge
+    self.items.each.with_index do |item, index|
+      if item.done
+        self.remove_item(index)
+      end
+    end
+  end
+
   def size
     self.items.length
   end
@@ -45,25 +62,24 @@ class List
   end
 
   def print
-    p "--------------------------------------------"
-    p "              #{self.label}                   "
-    p "--------------------------------------------"
-    p "Index |  Item           | Deadline          "
-    p "--------------------------------------------"
+    p "------------------------------------------------------"
+    p "            #{self.label.upcase.ljust(15)}  "
+    p "------------------------------------------------------"
+    p "Index |  Item                     | Deadline     | Done     "
+    p "------------------------------------------------------"
     self.items.each.with_index do |item, i|
-      #   p i.to_s + "     |" + item.title + "        | " + item.deadline
-      p "   #{i.to_s}  | #{item.title}          | #{item.deadline}        "
+      p " #{i.to_s.ljust(5)}| #{item.title.ljust(26)}| #{item.deadline.ljust(1)}   | [#{"✓" if item.done}] "
     end
-    p "--------------------------------------------"
+    p "------------------------------------------------------"
     true
   end
 
   def print_full_item(index)
     if valid_index?(index)
-      p "--------------------------------------------"
-      p "#{self[index].title}                            #{self[index].deadline}"
-      p "#{self[index].description}                                   "
-      p "--------------------------------------------"
+      p "------------------------------------------------------"
+      p "#{self[index].title.to_s.ljust(15).upcase}   #{self[index].deadline.to_s.ljust(15)}[#{"✓" if self[index].done}]".ljust(10)
+      p "#{self[index].description.to_s.ljust(50)} "
+      p "------------------------------------------------------"
       true
     else
       false
@@ -104,5 +120,9 @@ class List
 
   def sort_by_date!
     self.items.sort_by! { |item| item.deadline }
+  end
+
+  def toggle_item(index)
+    self.items[index].toggle
   end
 end
